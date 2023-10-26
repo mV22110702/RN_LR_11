@@ -31,7 +31,7 @@ export const BasketScreen: FC<BasketScreenProps> = () => {
     () =>
       basketEntries.reduce(
         (prev, entry) =>
-          entry.amount * entry.chosenListing.quote.USD.price + prev,
+          entry.amount * entry.chosenProduct.price + prev,
         0,
       ),
     [basketEntries],
@@ -45,7 +45,7 @@ export const BasketScreen: FC<BasketScreenProps> = () => {
           <Notification
             marginTop={10}
             id={id}
-            title={'Currency bought'}
+            title={'Products bought'}
             variant={'solid'}
             status={'success'}
           />

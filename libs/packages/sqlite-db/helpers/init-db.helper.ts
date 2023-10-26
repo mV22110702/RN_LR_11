@@ -1,31 +1,11 @@
 import { SqliteDb } from '../sqlite-db';
-import { ValueOf } from '../../../types/value-of.type';
 import { CategoryEntityT } from '../../../../slices/api/types/category-entity.type';
 import { ProductEntityT } from '../../../../slices/api/types/product-entity.type';
 
-const CategoryName = {
-  MOTHERBOARDS: 'Motherboards',
-  PROCESSORS: 'Processors',
-  RAM: 'RAM',
-  VIDEO_CARDS: 'Video cards',
-  SOUND_CARDS: 'Sound cards',
-  HARD_DISKS: 'Hard disks',
-  OPTICAL_DRIVES: 'Optical drives',
-  POWER_SUPPLIES: 'Power supplies',
-  HOUSINGS: 'Housings',
-  COOLING_SYSTEMS: 'Cooling systems',
-  UPS: 'UPS',
-  SSD: 'SSD',
-  VIDEO_CAPTURE_CARDS: 'Video capture cards',
-  UPS_BATTERIES_AND_ACCESSORIES: 'UPS batteries and accessories',
-  KEYBOARDS_AND_MICE: 'Keyboards and mice',
-  RAID_CONTROLLERS: 'RAID controllers',
-  MINI_COMPUTERS: 'Mini computers',
-  MINING_EQUIPMENT: 'Mining equipment',
-} as const;
-
-export async function initDb() {
-  await SqliteDb.driver().transaction(async (transaction) => {
+export function initDb() {
+  SqliteDb.driver().transaction(async (transaction) => {
+    transaction.executeSql(`DROP TABLE products`);
+    transaction.executeSql(`DROP TABLE categories`);
     transaction.executeSql(
       `CREATE TABLE IF NOT EXISTS categories (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,10 +45,9 @@ export async function initDb() {
     ];
 
     categoriesMock.forEach((category) => {
-      transaction.executeSql(
-        `INSERT INTO categories (name) VALUES (?)`,
-        [category.name],
-      );
+      transaction.executeSql(`INSERT INTO categories (name) VALUES (?)`, [
+        category.name,
+      ]);
     });
 
     const productsMock: Array<Omit<ProductEntityT, 'id'>> = Object.values(
@@ -80,6 +59,7 @@ export async function initDb() {
           price: Number.parseFloat((Math.random() * 1000).toFixed(1)),
           quantity: 1000,
           categoryId,
+          categoryName,
         }));
       })
       .flat();

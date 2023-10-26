@@ -42,7 +42,7 @@ export const apiSlice = createApi({
         try {
           SqliteDb.driver().transaction((transaction) => {
             transaction.executeSql(
-              `SELECT FROM categories`,
+              `SELECT id,name FROM categories`,
               [],
               (transaction, resultSet) =>
                 (result = resultSet.rows._array as CategoryEntityT[]),
@@ -79,7 +79,17 @@ export const apiSlice = createApi({
         try {
           SqliteDb.driver().transaction((transaction) => {
             transaction.executeSql(
-              `SELECT FROM products WHERE category_id=?`,
+              `SELECT 
+                products.id,
+                products.name,
+                products.price,
+                products.quantity,
+                products.category_id as categoryId,
+                categories.name as categoryName
+               FROM
+                products JOIN categories ON (products.category_id=categories.id)
+               WHERE products.category_id=?
+                `,
               [categoryId],
               (transaction, resultSet) =>
                 (result = resultSet.rows._array as ProductEntityT[]),
@@ -134,8 +144,18 @@ export const apiSlice = createApi({
 
           SqliteDb.driver().transaction((transaction) => {
             transaction.executeSql(
-              `UPDATE products WHERE id=? ${updateSetString}`,
-              [payload.id, ...Object.values(payload.payload)],
+              `SELECT 
+                products.id,
+                products.name,
+                products.price,
+                products.quantity,
+                products.category_id as categoryId,
+                categories.name as categoryName
+               FROM
+                products JOIN categories ON (products.category_id=categories.id)
+               WHERE products.id=?
+                `,
+              [payload.id],
               (transaction, resultSet) =>
                 (result = resultSet.rows.item(0) as ProductEntityT),
               (transaction, error) => {

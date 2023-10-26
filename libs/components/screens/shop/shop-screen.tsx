@@ -8,6 +8,7 @@ export type ShopScreenProps = BottomTabScreenProps<MainTabParamList, 'Shop'>;
 
 export type ShopParamsList = {
   ShopHome: undefined;
+  ShopProducts: { categoryId: number };
 };
 const ShopScreenStack = createNativeStackNavigator<ShopParamsList>();
 
@@ -17,10 +18,19 @@ export const ShopScreen: FC<ShopScreenProps> = () => {
       <ShopScreenStack.Screen
         name={'ShopHome'}
         options={{
-          title: 'Browse currencies',
-          headerTitle: 'Browse currencies',
+          title: 'Browse categories',
+          headerTitle: 'Browse categories',
         }}
         component={ShopHomeScreen}
+      />
+
+      <ShopScreenStack.Screen
+        name={'ShopProducts'}
+        options={{
+          title: 'Browse products',
+          headerTitle: 'Browse products',
+        }}
+        component={ShopProductsScreen}
       />
     </ShopScreenStack.Navigator>
   );
