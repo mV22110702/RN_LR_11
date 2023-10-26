@@ -1,5 +1,5 @@
 import { ShopListCategoryItem } from './shop-list-category-item';
-import { Divider, FlatList } from 'native-base';
+import { Center,Text, Divider, FlatList } from 'native-base';
 import {FC, memo} from 'react';
 import { CategoryEntityT } from '../../../../../slices/api/types/category-entity.type';
 import { ProductEntityT } from '../../../../../slices/api/types/product-entity.type';
@@ -28,6 +28,7 @@ export const ShopProductsList: FC<Properties> = memo(
             setIsModalVisible={setIsModalVisible}
           />
         )}
+        ListEmptyComponent={()=><Center><Text>No products left</Text></Center>}
         ItemSeparatorComponent={() => <Divider />}
       />
     );
