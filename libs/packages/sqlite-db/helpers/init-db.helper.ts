@@ -68,7 +68,7 @@ export async function initDb() {
       categoriesMock,
     )
       .map(({ name: categoryName, id: categoryId }) => {
-        return Object.keys(Array.from({ length: 1 })).map((index) => ({
+        return Object.keys(Array.from({ length: 10 })).map((index) => ({
           name: `${index}-${categoryName}`,
           price: Number.parseFloat((Math.random() * 1000).toFixed(1)),
           quantity: 1000,
