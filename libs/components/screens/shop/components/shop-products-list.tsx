@@ -9,27 +9,27 @@ type Properties = {
   setChosenProduct: (product: ProductEntityT) => void;
   setIsModalVisible: (isModalVisible: boolean) => void;
 };
-export const ShopCategoriesList: FC<Properties> = memo(
+export const ShopProductsList: FC<Properties> = memo(
   ({
-     categories,
-     // setChosenListing,
-     // setIsModalVisible
+     products,
+     setChosenProduct,
+     setIsModalVisible
   }) => {
     return (
       <FlatList
         width={'100%'}
         px={5}
-        data={categories}
+        data={products}
         renderItem={({ item }) => (
-          <ShopListCategoryItem
-            category={item}
-            // setChosenListing={setChosenListing}
-            // setIsModalVisible={setIsModalVisible}
+          <ShopListProductItem
+            product={item}
+            setChosenProduct={setChosenProduct}
+            setIsModalVisible={setIsModalVisible}
           />
         )}
         ItemSeparatorComponent={() => <Divider />}
       />
     );
   },
-  (prevProps, nextProps) => prevProps.categories === nextProps.categories,
+  (prevProps, nextProps) => prevProps.products === nextProps.products,
 );

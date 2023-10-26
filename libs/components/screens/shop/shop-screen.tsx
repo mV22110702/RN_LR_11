@@ -3,6 +3,7 @@ import { MainTabParamList } from '../../app';
 import { FC } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ShopHomeScreen } from './shop-home.screen';
+import { ShopProductsScreen } from './shop-products.screen';
 
 export type ShopScreenProps = BottomTabScreenProps<MainTabParamList, 'Shop'>;
 

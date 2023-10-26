@@ -2,29 +2,28 @@ import { Button, Center, FormControl, Modal, Spinner, Text } from 'native-base';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { addEntry } from '../../../../../slices/basket/basket.slice';
 import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
-import { Listing } from '../../../../../slices/api/types/types';
 import NumericInput from 'react-native-numeric-input';
+import { ProductEntityT } from '../../../../../slices/api/types/product-entity.type';
 
 type Properties = {
-  listing: Listing | null;
+  product: ProductEntityT | null;
   isModalVisible: boolean;
   setIsModalVisible: (isVisible: boolean) => void;
 };
 export const ModalBuy: FC<Properties> = ({
-  listing,
+                                           product,
   isModalVisible,
   setIsModalVisible,
 }) => {
   const INITIAL_AMOUNT = useMemo(() => 1, []);
-
   const dispatch = useAppDispatch();
   const [amount, setAmount] = useState(INITIAL_AMOUNT);
   const handlePressBuy = useCallback(() => {
-    if (!listing) {
+    if (!product) {
       return;
     }
-    dispatch(addEntry({ chosenListing: { ...listing }, amount }));
-  }, [listing]);
+    dispatch(addEntry({ chosenProduct: { ...product }, amount }));
+  }, [product]);
 
   const handleClose = () => {
     setAmount(INITIAL_AMOUNT);
@@ -36,10 +35,10 @@ export const ModalBuy: FC<Properties> = ({
       <Modal.Content>
         <Modal.CloseButton />
         <Modal.Header>
-          {listing ? `Buy ${listing.name}` : 'Loading...'}
+          {product ? `Buy ${product.name}` : 'Loading...'}
         </Modal.Header>
         <Modal.Body>
-          {listing ? (
+          {product ? (
             <FormControl alignItems={'center'}>
               <FormControl.Label>
                 {' '}
