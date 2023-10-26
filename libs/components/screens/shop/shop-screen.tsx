@@ -15,7 +15,7 @@ const ShopScreenStack = createNativeStackNavigator<ShopParamsList>();
 
 export const ShopScreen: FC<ShopScreenProps> = () => {
   return (
-    <ShopScreenStack.Navigator initialRouteName={'ShopHome'}>
+    <ShopScreenStack.Navigator screenOptions={{contentStyle:{backgroundColor:'white'}}} initialRouteName={'ShopHome'}>
       <ShopScreenStack.Screen
         name={'ShopHome'}
         options={{

@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import {
   Button,
   Center,
@@ -10,24 +10,38 @@ import {
 } from 'native-base';
 import { categoryToImg } from '../../../../maps/category-to-img.map';
 import { CategoryEntityT } from '../../../../../slices/api/types/category-entity.type';
-import { useNavigation } from '@react-navigation/native';
-import { ShopHomeScreenParams } from '../shop-home.screen';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { MainTabParamList } from '../../../app';
+import { ShopParamsList } from '../shop-screen';
+
+type ShopHomeNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<ShopParamsList, 'ShopHome'>,
+  BottomTabNavigationProp<MainTabParamList>
+>;
 
 type Properties = {
   category: CategoryEntityT;
-  // setChosenListing: (listing: Listing) => void;
-  // setIsModalVisible: (isModalVisible:boolean) => void;
 };
 export const ShopListCategoryItem: FC<Properties> = ({
   category,
-  // setChosenListing,
-  // setIsModalVisible
 }) => {
-  const { navigation, route } = useNavigation<ShopHomeScreenParams>();
+  const navigation = useNavigation<ShopHomeNavigationProp>();
   const handleChooseListing = useCallback(() => {
+    console.log("NAVIGATION")
     navigation.navigate('ShopProducts', { categoryId: category.id });
-    // setChosenListing(listing);
-    // setIsModalVisible(true);
+  }, [category]);
+  const [imageUri, setImageUri] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    (async () => {
+      console.log('loading image uri for')
+      console.log(category.name)
+      const imageUri =
+        (await categoryToImg(category.name)) ??
+        undefined;
+      setImageUri(imageUri);
+    })();
   }, []);
   return (
     <Pressable onPress={handleChooseListing}>
@@ -42,9 +56,9 @@ export const ShopListCategoryItem: FC<Properties> = ({
             <Image
               alt={category.name}
               source={{
-                uri: categoryToImg[category.name] ?? undefined,
+                uri: imageUri,
               }}
-              size={10}
+              size={100}
             />
           </Center>
           <VStack space={1} alignContent={'start'}>

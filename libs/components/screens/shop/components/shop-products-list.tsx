@@ -3,6 +3,7 @@ import { Divider, FlatList } from 'native-base';
 import {FC, memo} from 'react';
 import { CategoryEntityT } from '../../../../../slices/api/types/category-entity.type';
 import { ProductEntityT } from '../../../../../slices/api/types/product-entity.type';
+import { ShopListProductItem } from './shop-list-product-item';
 
 type Properties = {
   products: ProductEntityT[];

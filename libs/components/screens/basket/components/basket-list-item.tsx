@@ -1,17 +1,26 @@
 import { HStack, VStack, Image, Text, Center, Button } from 'native-base';
 import { BasketEntry } from '../../../../../slices/basket/types/types';
-import {FC, useCallback} from 'react';
-import {useAppDispatch} from "../../../../hooks/use-app-dispatch.hook";
-import {removeEntry} from "../../../../../slices/basket/basket.slice";
+import { FC, useCallback, useEffect, useState } from 'react';
+import { useAppDispatch } from '../../../../hooks/use-app-dispatch.hook';
+import { removeEntry } from '../../../../../slices/basket/basket.slice';
 import { categoryToImg } from '../../../../maps/category-to-img.map';
 
 type Properties = { basketEntry: BasketEntry };
 
 export const BasketListItem: FC<Properties> = ({ basketEntry }) => {
-  const dispatch = useAppDispatch()
-  const handlePressDiscard = useCallback(()=>{
-    dispatch(removeEntry(basketEntry))
-  },[]);
+  const dispatch = useAppDispatch();
+  const handlePressDiscard = useCallback(() => {
+    dispatch(removeEntry(basketEntry));
+  }, []);
+  const [imageUri, setImageUri] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    (async () => {
+      const imageUri =
+        (await categoryToImg(basketEntry.chosenProduct.categoryName)) ??
+        undefined;
+      setImageUri(imageUri);
+    })();
+  }, []);
   return (
     <VStack>
       <HStack
@@ -25,7 +34,7 @@ export const BasketListItem: FC<Properties> = ({ basketEntry }) => {
             <Image
               alt={basketEntry.chosenProduct.name}
               source={{
-                uri: categoryToImg[basketEntry.chosenProduct.categoryName],
+                uri: imageUri,
               }}
               size={10}
             />
@@ -35,9 +44,7 @@ export const BasketListItem: FC<Properties> = ({ basketEntry }) => {
           </VStack>
         </HStack>
         <VStack flex={1}>
-          <Text>
-            {basketEntry.chosenProduct.price.toLocaleString()} $
-          </Text>
+          <Text>{basketEntry.chosenProduct.price.toLocaleString()} $</Text>
           <Text>x{basketEntry.amount}</Text>
         </VStack>
       </HStack>
@@ -51,7 +58,9 @@ export const BasketListItem: FC<Properties> = ({ basketEntry }) => {
             $
           </Text>
         </Text>
-        <Button colorScheme={'danger'} onPress={handlePressDiscard}>Discard</Button>
+        <Button colorScheme={'danger'} onPress={handlePressDiscard}>
+          Discard
+        </Button>
       </HStack>
     </VStack>
   );

@@ -11,7 +11,7 @@ type Properties = {
   setIsModalVisible: (isVisible: boolean) => void;
 };
 export const ModalBuy: FC<Properties> = ({
-                                           product,
+  product,
   isModalVisible,
   setIsModalVisible,
 }) => {
@@ -19,11 +19,13 @@ export const ModalBuy: FC<Properties> = ({
   const dispatch = useAppDispatch();
   const [amount, setAmount] = useState(INITIAL_AMOUNT);
   const handlePressBuy = useCallback(() => {
-    if (!product) {
+    console.log('amount')
+    console.log(amount);
+    if (!product || amount === 0 || product.quantity < amount) {
       return;
     }
     dispatch(addEntry({ chosenProduct: { ...product }, amount }));
-  }, [product]);
+  }, [product,amount]);
 
   const handleClose = () => {
     setAmount(INITIAL_AMOUNT);
@@ -44,7 +46,7 @@ export const ModalBuy: FC<Properties> = ({
                 {' '}
                 <Text fontSize={'xl'}>How much You want to buy?</Text>
               </FormControl.Label>
-              <NumericInput value={amount} iconSize={1} onChange={setAmount} />
+              <NumericInput minValue={0} maxValue={product.quantity}   value={amount} iconSize={1} onChange={setAmount} />
             </FormControl>
           ) : (
             <Center>

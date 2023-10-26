@@ -1,51 +1,52 @@
 import { useSelector } from 'react-redux';
-import { Center, Divider, FlatList, Heading, Spinner } from 'native-base';
+import { Center, Heading, Spinner } from 'native-base';
 import { showErrorMessage } from '../../../helpers/show-error-message.helper';
-import { ShopListCategoryItem } from './components/shop-list-category-item';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { MainTabParamList } from '../../app';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { ShopParamsList } from './shop-screen';
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import { ModalBuy } from './components/modal-buy';
-import { ShopCategoriesList } from './components/shop-categories-list';
 import {
-  getProductsSelectors,
-  selectAllCategories,
-  useGetCategoriesQuery,
+  apiSlice,
+  initialProductsState,
+  productsEntityAdapter,
   useGetProductsByCategoryIdQuery,
 } from '../../../../slices/api/api.slice';
 import { ProductEntityT } from '../../../../slices/api/types/product-entity.type';
 import { ShopProductsList } from './components/shop-products-list';
+import { AppState } from '../../../packages/store/store';
+import { EntitySelectors } from '@reduxjs/toolkit';
 
 export type ShopProductsScreenParams = CompositeScreenProps<
   NativeStackScreenProps<ShopParamsList, 'ShopProducts'>,
   BottomTabScreenProps<MainTabParamList>
 >;
 
-export const ShopProductsScreen: FC<ShopProductsScreenParams> = ({
-  navigation,
-  route,
-}) => {
+export const ShopProductsScreen: FC<ShopProductsScreenParams> = ({ route }) => {
   const { categoryId } = route.params;
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isFetching, error, data } = useGetProductsByCategoryIdQuery(categoryId);
+  const { isFetching, error, data } =
+    useGetProductsByCategoryIdQuery(categoryId);
   const [chosenProduct, setChosenProduct] = useState<ProductEntityT | null>(
     null,
   );
-  if (isFetching || !data) {
+  if (isFetching) {
     return <Spinner flex={1} />;
   }
-  //TODO: select all products
-  // const products = Object.values(data);
-  if (error) {
+  if (error || !data) {
     return <Heading>{showErrorMessage(error)}</Heading>;
   }
+  const products = Object.values(data.entities).filter(
+    (product) => !!product,
+  ) as ProductEntityT[];
+  console.log("rendering products")
+  console.log(products)
   return (
     <Center mt={50} flex={1}>
       <ShopProductsList
-        products={categories}
+        products={products}
         setChosenProduct={setChosenProduct}
         setIsModalVisible={setIsModalVisible}
       />

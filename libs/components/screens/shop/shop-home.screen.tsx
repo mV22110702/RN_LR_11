@@ -18,9 +18,7 @@ export type ShopHomeScreenParams = CompositeScreenProps<
 >;
 
 export const ShopHomeScreen: FC<ShopHomeScreenParams> = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const { isFetching, error } = useGetCategoriesQuery(undefined);
-  // const [chosenListing, setChosenListing] = useState<Listing | null>(null);
   const categories = useSelector(selectAllCategories);
   if (isFetching) {
     return <Spinner flex={1} />;
@@ -32,14 +30,7 @@ export const ShopHomeScreen: FC<ShopHomeScreenParams> = () => {
     <Center mt={50} flex={1}>
       <ShopCategoriesList
         categories={categories}
-        // setChosenListing={setChosenListing}
-        // setIsModalVisible={setIsModalVisible}
       />
-      {/*<ModalBuy*/}
-      {/*  listing={chosenListing}*/}
-      {/*  isModalVisible={isModalVisible}*/}
-      {/*  setIsModalVisible={setIsModalVisible}*/}
-      {/*/>*/}
     </Center>
   );
 };

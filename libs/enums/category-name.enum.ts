@@ -1,4 +1,4 @@
-const CategoryName = {
+export const CategoryName = {
   MOTHERBOARDS: 'Motherboards',
   PROCESSORS: 'Processors',
   RAM: 'RAM',

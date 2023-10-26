@@ -1,6 +1,6 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { MainTabParamList } from '../../app';
-import { FC, Fragment, useCallback, useMemo } from 'react';
+import { FC, Fragment, useCallback, useEffect, useMemo } from 'react';
 import {
   Button,
   Toast,
@@ -20,6 +20,8 @@ import {
 import { BasketListItem } from './components/basket-list-item';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch.hook';
 import { Notification } from '../../notification';
+import { useUpdateProductsByIdsMutation } from '../../../../slices/api/api.slice';
+import { showErrorMessage } from '../../../helpers/show-error-message.helper';
 
 export type BasketScreenProps = BottomTabScreenProps<
   MainTabParamList,
@@ -27,17 +29,35 @@ export type BasketScreenProps = BottomTabScreenProps<
 >;
 export const BasketScreen: FC<BasketScreenProps> = () => {
   const basketEntries = useSelector(selectAllEntries);
+  console.log('basket entries')
+  console.log(basketEntries);
   const totalSum = useMemo(
     () =>
       basketEntries.reduce(
-        (prev, entry) =>
-          entry.amount * entry.chosenProduct.price + prev,
+        (prev, entry) => entry.amount * entry.chosenProduct.price + prev,
         0,
       ),
     [basketEntries],
   );
   const dispatch = useAppDispatch();
+  const [updateProductsByIds, { error, isSuccess, isUninitialized,isLoading }] =
+    useUpdateProductsByIdsMutation();
   const handlePressCheckout = useCallback(() => {
+    updateProductsByIds(
+      basketEntries.map((basketEntry) => ({
+        id: basketEntry.chosenProduct.id,
+        partialProduct: {
+          quantity: basketEntry.chosenProduct.quantity - basketEntry.amount,
+        },
+      })),
+    );
+  }, [updateProductsByIds,basketEntries]);
+  useEffect(() => {
+    if(isUninitialized||isLoading){
+      return;
+    }
+    console.log('error')
+    console.log(error)
     dispatch(clearBasket());
     Toast.show({
       render: ({ id }) => {
@@ -45,7 +65,7 @@ export const BasketScreen: FC<BasketScreenProps> = () => {
           <Notification
             marginTop={10}
             id={id}
-            title={'Products bought'}
+            title={error ? showErrorMessage(error) : 'Products bought'}
             variant={'solid'}
             status={'success'}
           />
@@ -53,7 +73,7 @@ export const BasketScreen: FC<BasketScreenProps> = () => {
       },
       placement: 'top',
     });
-  }, []);
+  }, [isSuccess, error,isUninitialized,isLoading]);
   return (
     <VStack flex={1}>
       {basketEntries.length === 0 ? (
